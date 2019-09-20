@@ -6,7 +6,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-from evolve import evolve
+from fortran_mod import evolve
 
 # Set the colormap
 plt.rcParams['image.cmap'] = 'BrBG'
@@ -28,8 +28,9 @@ dt = dx2*dy2 / ( 2*a*(dx2+dy2) )
 
 def init_fields(filename):
     # Read the initial temperature field from file
-    field = np.loadtxt(filename)
-    field0 = field.copy() # Array for field of previous time step
+    input_array = np.loadtxt(filename)
+    field = input_array.copy(order='F')
+    field0 = field.copy(order='F') # Array for field of previous time step
     return field, field0
 
 def write_field(field, step):
@@ -40,7 +41,7 @@ def write_field(field, step):
 
 def iterate(field, field0, timesteps, image_interval):
     for m in range(1, timesteps+1):
-        evolve(field, field0, a, dt, dx2, dy2)
+        evolve(u=field, u_previous=field0, a= a, dt=dt, dx2=dx2, dy2=dy2)
         if m % image_interval == 0:
             write_field(field, m)
 
