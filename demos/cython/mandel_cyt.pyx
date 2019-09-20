@@ -8,7 +8,7 @@ cdef int kernel(double zr, double zi, double cr, double ci, double lim, int cuto
     ''' Computes the number of iterations `n` such that 
         |z_n| > `lim`, where `z_n = z_{n-1}**2 + c`.
     '''
-    cdef int count = 0
+    count = 0
     while ((zr*zr + zi*zi) < (lim*lim)) and count < cutoff:
         zr, zi = zr * zr - zi * zi + cr, 2 * zr * zi + ci
         count += 1
