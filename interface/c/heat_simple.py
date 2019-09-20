@@ -6,7 +6,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-from evolve import evolve
+# from evolve import evolve
+from _evolve import ffi, lib
 
 # Set the colormap
 plt.rcParams['image.cmap'] = 'BrBG'
@@ -39,8 +40,12 @@ def write_field(field, step):
     plt.savefig('heat_{0:03d}.png'.format(step))
 
 def iterate(field, field0, timesteps, image_interval):
+    nx, ny = field.shape
+    fieldprt = ffi.cast("double *", ffi.from_buffer(field))
+    field0prt = ffi.cast("double *", ffi.from_buffer(field0))
     for m in range(1, timesteps+1):
-        evolve(field, field0, a, dt, dx2, dy2)
+        lib.evolve(fieldprt, field0prt, nx, ny, a, dt,
+                   dx2, dy2)
         if m % image_interval == 0:
             write_field(field, m)
 
